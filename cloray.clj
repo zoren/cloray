@@ -13,3 +13,24 @@
   (let [ptoa (vsub (:pos line) point)
         n (norm (:vec line))]
     (vlength (vsub ptoa (scale (vdot ptoa n) n)))))
+(defn walk-line [scalar line] (vadd (:pos line) (scale scalar (:vec line))))
+(defn sq [x] (* x x))
+(def epsilon 1e-5)
+(defn line-sphere-intersections [line sphere]
+  (let [ctoo (vsub (:pos line) (:center sphere))
+        disc (- (sq (vdot (:vec line) ctoo)) (- (sq (vlength ctoo)) (sq (:radius sphere))))
+        ]
+    (cond
+      (< disc (- epsilon)) []
+      (< (Math/abs disc) epsilon) [(walk-line (- (vdot (:vec line) ctoo)) line)]
+      :else (let [f (- (vdot (:vec line) ctoo))
+                  s (Math/sqrt disc)] (map #(walk-line % line) [(- f s) (+ f s)]))
+      )
+    )
+  )
+(comment
+  "two, one and zero intersections"
+  (line-sphere-intersections {:pos (v 0 0 0) :vec (v 1 0 0)} {:center (v 0 0 0) :radius 1.0})
+  (line-sphere-intersections {:pos (v 0 1 0) :vec (v 1 0 0)} {:center (v 0 0 0) :radius 1.0})
+  (line-sphere-intersections {:pos (v 0 2 0) :vec (v 1 0 0)} {:center (v 0 0 0) :radius 1.0})
+  )
