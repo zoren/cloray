@@ -89,22 +89,21 @@
                         :color Color/BLUE}
                        }})
 
+(defn min-nil [l] (if (empty? l) nil (reduce min l)))
+
 ;; https://stackoverflow.com/a/33749052
 ;; https://www.programcreek.com/java-api-examples/?class=java.awt.image.BufferedImage&method=setRGB
 (defn calc-pixel [x y width height]
   (let [view-plane-pos
-        (vadd (v -1 -1 0) (vadd (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0))))
-        ray {:pos view-plane-pos :vec (v 0 0 1)}
-        gc (fn [sphere]
-             (case (count (line-sphere-intersections ray sphere))
-               0 nil
-               1 Color/GREEN
-               2 Color/BLUE
-               ))
-        col (first (filter #(gc %) (:spheres scene)))
+        (vadd (v -1 -1 10) (vadd (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0))))
+        ray {:pos view-plane-pos :vec (v 0 0 -1)}
+        dist-from-eye #(vlength (vsub view-plane-pos %))
+        sphere-dists (map (fn [sphere] [(min-nil (map dist-from-eye (line-sphere-intersections ray sphere))) sphere]) (:spheres scene))
+        sorted-sphere-dists (sort-by first (filter first sphere-dists))
+        closest-sphere (second (first sorted-sphere-dists))
         ]
-    ;; (filter gc (:spheres scene))
-    (if col (:color col))))
+    (:color closest-sphere)))
+
 ;; http://www.thebusby.com/2010/02/capturing-screenshot-displaying-image.html?m=1
 (defn display-image
   "Displays an image in a new window"
