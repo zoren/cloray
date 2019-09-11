@@ -98,11 +98,24 @@
   (let [view-plane-pos
         (vadd (v -1 -1 10) (vadd (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0))))
         ray {:pos view-plane-pos :vec (v 0 0 -1)}
+        light (v 100 100 -100)
         sphere-dists (map (fn [sphere] [(first (line-sphere-intersections-scales ray sphere)) sphere]) (:spheres scene))
         sorted-sphere-dists (sort-by first (filter first sphere-dists))
-        closest-sphere (second (first (filter first sorted-sphere-dists)))
+        closest-sphere-pair (first (filter first sorted-sphere-dists))
+        closest-sphere (second closest-sphere-pair)
         ]
-    (:color closest-sphere)))
+    (if closest-sphere
+      (let
+          [intersection (if closest-sphere-pair (walk-line (first closest-sphere-pair) ray))
+           normal (norm (vsub intersection (:center closest-sphere)))
+           dot (vdot (norm (vsub intersection light)) normal)
+           color (:color closest-sphere)
+           g (fn [color-component] (int (max 0 (min 255 (* dot color-component)))))
+           ]
+        (Color. (g (.getRed color)) (g (.getGreen color)) (g (.getBlue color)))
+        )
+      )
+    ))
 
 ;; http://www.thebusby.com/2010/02/capturing-screenshot-displaying-image.html?m=1
 (defn display-image
