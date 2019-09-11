@@ -37,6 +37,7 @@
       )
     )
   )
+(defn angle [u v] (Math/acos (/ (vdot u v) (* (vlength u) (vlength v)))))
 (comment
   "two, one and zero intersections"
   (line-sphere-intersections {:pos (v 0 0 0) :vec (v 1 0 0)} {:center (v 0 0 0) :radius 1.0})
