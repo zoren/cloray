@@ -25,18 +25,21 @@
 (defn walk-line [scalar line] (vadd (:pos line) (scale scalar (:vec line))))
 (defn sq [x] (* x x))
 (def epsilon 1e-5)
-(defn line-sphere-intersections [line sphere]
+(defn line-sphere-intersections-scales [line sphere]
   (let [ctoo (vsub (:pos line) (:center sphere))
         disc (- (sq (vdot (:vec line) ctoo)) (- (sq (vlength ctoo)) (sq (:radius sphere))))
         ]
     (cond
       (< disc (- epsilon)) []
-      (< (Math/abs disc) epsilon) [(walk-line (- (vdot (:vec line) ctoo)) line)]
+      (< (Math/abs disc) epsilon) [(- (vdot (:vec line) ctoo))]
       :else (let [f (- (vdot (:vec line) ctoo))
-                  s (Math/sqrt disc)] (map #(walk-line % line) [(- f s) (+ f s)]))
+                  s (Math/sqrt disc)] [(- f s) (+ f s)])
       )
     )
   )
+(defn line-sphere-intersections [line sphere]
+  (map #(walk-line % line) (line-sphere-intersections-scales line sphere)))
+
 (defn angle [u v] (Math/acos (/ (vdot u v) (* (vlength u) (vlength v)))))
 (comment
   "two, one and zero intersections"
@@ -89,18 +92,15 @@
                         :color Color/BLUE}
                        }})
 
-(defn min-nil [l] (if (empty? l) nil (reduce min l)))
-
 ;; https://stackoverflow.com/a/33749052
 ;; https://www.programcreek.com/java-api-examples/?class=java.awt.image.BufferedImage&method=setRGB
 (defn calc-pixel [x y width height]
   (let [view-plane-pos
         (vadd (v -1 -1 10) (vadd (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0))))
         ray {:pos view-plane-pos :vec (v 0 0 -1)}
-        dist-from-eye #(vlength (vsub view-plane-pos %))
-        sphere-dists (map (fn [sphere] [(min-nil (map dist-from-eye (line-sphere-intersections ray sphere))) sphere]) (:spheres scene))
+        sphere-dists (map (fn [sphere] [(first (line-sphere-intersections-scales ray sphere)) sphere]) (:spheres scene))
         sorted-sphere-dists (sort-by first (filter first sphere-dists))
-        closest-sphere (second (first sorted-sphere-dists))
+        closest-sphere (second (first (filter first sorted-sphere-dists)))
         ]
     (:color closest-sphere)))
 
