@@ -121,15 +121,16 @@
                (.setSize (+ 10 (. image getWidth)) (+ 30 (. image getHeight)))
                (.setVisible true)))
   (def cv (proxy [java.awt.Canvas] [] (paint [g] (. g drawImage image nil nil))))
-  (.add (.getContentPane frame) cv)
-  (.revalidate frame)
-  (mk-col image Color/BLUE)
-  (mk-col image Color/RED)
-  (.repaint cv)
+
+  (do
+    (.add (.getContentPane frame) cv)
+    (.revalidate frame))
   (.dispose frame)
   (.toFront frame)
-  )
 
-(mk-col image Color/BLACK)
-(paint-func image calc-pixel)
-(.repaint cv)
+
+  (do
+    (mk-col image Color/BLACK)
+    (paint-func image calc-pixel)
+    (.repaint cv))
+  )
