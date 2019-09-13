@@ -21,15 +21,16 @@
 (defn walk-line [scalar line] (vadd (:pos line) (scale scalar (:vec line))))
 (defn sq [x] (* x x))
 (def epsilon 1e-5)
-(defn line-sphere-intersections-scales [line sphere]
+(defn line-sphere-intersections-scale [line sphere]
+  "returns the distance along the line to the sphere intersection closest to the line origin, if there is one"
   (let [ctoo (vsub (:pos line) (:center sphere))
         disc (- (sq (vdot (:vec line) ctoo)) (- (vdot ctoo ctoo) (sq (:radius sphere))))
         ]
     (cond
-      (< disc (- epsilon)) []
-      (< (Math/abs disc) epsilon) [(- (vdot (:vec line) ctoo))]
+      (< disc (- epsilon)) nil
+      (< (Math/abs disc) epsilon) (- (vdot (:vec line) ctoo))
       :else (let [f (- (vdot (:vec line) ctoo))
-                  s (Math/sqrt disc)] [(- f s) (+ f s)])
+                  s (Math/sqrt disc)] (- f s))
       )
     )
   )
@@ -54,7 +55,7 @@
         (vadd (v -1 -1 10) (vadd (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0))))
         ray {:pos view-plane-pos :vec (v 0 0 -1)}
         light (v 100 100 -100)
-        sphere-dists (map (fn [sphere] [(first (line-sphere-intersections-scales ray sphere)) sphere]) spheres)
+        sphere-dists (map (fn [sphere] [(line-sphere-intersections-scale ray sphere) sphere]) spheres)
         sorted-sphere-dists (sort-by first (filter first sphere-dists))
         closest-sphere-pair (first (filter first sorted-sphere-dists))
         closest-sphere (second closest-sphere-pair)
