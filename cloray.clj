@@ -39,29 +39,6 @@
 (defn line-sphere-intersections [line sphere]
   (map #(walk-line % line) (line-sphere-intersections-scales line sphere)))
 
-(defn mk-buf-img [width height] (BufferedImage. width height BufferedImage/TYPE_INT_ARGB))
-(defn paint-func [image f]
-  (dotimes [y (. image getHeight)]
-    (dotimes [x (. image getWidth)]
-      (if-let [color (f x y (. image getWidth) (. image getHeight))]
-        (.setRGB image (int x) (int y) (.getRGB color)))) image))
-(defn mk-col [image color] (paint-func image (constantly color)))
-
-(defn write-png-file [image file-name] (ImageIO/write image "png" (File. (str "./" file-name ".png"))))
-(defn mk-argb-img-func [width height f]
-  (let [image (mk-buf-img width height)]
-    (dotimes [n height] (dotimes [m width] (.setRGB image (int m) (int n) (.getRGB (f m n)))))
-    image))
-(defn show-img [width height color] (mk-argb-img-func width height (fn [_x _y] color)))
-(defn show-img-2 [width height color color2]
-  (mk-argb-img-func width height
-                    (fn [x y] (if (< x y) color color2))))
-(defn calc-pixel [x y width height]
-  (if (< (vlength (vsub (v x y) (v (/ width 2) (/ height 2)))) 50.0)
-    (.getRGB Color/GREEN)
-    ;; (if (< (vlength (vsub (v x y) (v 0 0))) 100.0)
-    ;;   (.getRGB Color/RED))
-    ))
 (def scene {:cam {:eye-pos (v 0.0 0.0 -1.0)
                   :view-plane
                   {:pos (v -1.0 -1.0 0.0)
@@ -106,6 +83,30 @@
         (Color. (g (.getRed color)) (g (.getGreen color)) (g (.getBlue color)))
         )
       )
+    ))
+
+(defn mk-buf-img [width height] (BufferedImage. width height BufferedImage/TYPE_INT_ARGB))
+(defn paint-func [image f]
+  (dotimes [y (. image getHeight)]
+    (dotimes [x (. image getWidth)]
+      (if-let [color (f x y (. image getWidth) (. image getHeight))]
+        (.setRGB image (int x) (int y) (.getRGB color)))) image))
+(defn mk-col [image color] (paint-func image (constantly color)))
+
+(defn write-png-file [image file-name] (ImageIO/write image "png" (File. (str "./" file-name ".png"))))
+(defn mk-argb-img-func [width height f]
+  (let [image (mk-buf-img width height)]
+    (dotimes [n height] (dotimes [m width] (.setRGB image (int m) (int n) (.getRGB (f m n)))))
+    image))
+(defn show-img [width height color] (mk-argb-img-func width height (fn [_x _y] color)))
+(defn show-img-2 [width height color color2]
+  (mk-argb-img-func width height
+                    (fn [x y] (if (< x y) color color2))))
+(defn calc-pixel [x y width height]
+  (if (< (vlength (vsub (v x y) (v (/ width 2) (/ height 2)))) 50.0)
+    (.getRGB Color/GREEN)
+    ;; (if (< (vlength (vsub (v x y) (v 0 0))) 100.0)
+    ;;   (.getRGB Color/RED))
     ))
 
 ;; http://www.thebusby.com/2010/02/capturing-screenshot-displaying-image.html?m=1
