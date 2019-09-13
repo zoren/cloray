@@ -17,10 +17,6 @@
 (defn vdot [a b] (apply + (vals (merge-with * a b))))
 (defn vlength [v] (Math/sqrt (vdot v v)))
 (defn norm [v] (scale (/ 1 (vlength v)) v))
-(defn dist [line point]
-  (let [ptoa (vsub (:pos line) point)
-        n (norm (:vec line))]
-    (vlength (vsub ptoa (scale (vdot ptoa n) n)))))
 (defn walk-line [scalar line] (vadd (:pos line) (scale scalar (:vec line))))
 (defn sq [x] (* x x))
 (def epsilon 1e-5)
