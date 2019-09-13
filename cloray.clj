@@ -10,6 +10,7 @@
   ([x] {:x x})
   ([x y] {:x x :y y})
   ([x y z] {:x x :y y :z z}))
+(defn rgb [r g b] {:r r :g g :b b})
 (defn map-vals [f m] (into {} (map (fn [[k v]] [k (f v)]) m)))
 (defn scale [scalar vec] (map-vals #(* scalar %) vec))
 (defn vadd [a b] (merge-with + a b))
@@ -47,13 +48,13 @@
             :spheres #{
                        {:center (v 0.0 0.0 0.0)
                         :radius 1
-                        :color Color/RED}
+                        :color (rgb 255 0 0)}
                        {:center (v 0.1 0.0 0.0)
                         :radius 1
-                        :color Color/GREEN}
+                        :color (rgb 0 255 0)}
                        {:center (v -0.1 0.0 0.0)
                         :radius 1
-                        :color Color/BLUE}
+                        :color (rgb 0 0 255)}
                        }})
 
 ;; https://stackoverflow.com/a/33749052
@@ -74,19 +75,21 @@
            normal (norm (vsub intersection (:center closest-sphere)))
            dot (vdot (norm (vsub intersection light)) normal)
            color (:color closest-sphere)
-           g (fn [color-component] (int (max 0 (min 255 (* dot color-component)))))
+           clamp #(max 0 (min 255 %))
+           g (fn [color-component] (clamp (* dot color-component)))
            ]
-        (Color. (g (.getRed color)) (g (.getGreen color)) (g (.getBlue color)))
+        (map-vals g color)
         )
       )
     ))
 
 (defn mk-buf-img [width height] (BufferedImage. width height BufferedImage/TYPE_INT_ARGB))
+(defn rgb-to-java-color [{:keys [r g b]}] (Color. (int r) (int g) (int b)))
 (defn paint-func [image f]
   (dotimes [y (. image getHeight)]
     (dotimes [x (. image getWidth)]
       (if-let [color (f x y (. image getWidth) (. image getHeight))]
-        (.setRGB image (int x) (int y) (.getRGB color)))) image))
+        (.setRGB image (int x) (int y) (.getRGB (rgb-to-java-color color))))) image))
 (defn mk-col [image color] (paint-func image (constantly color)))
 
 (defn write-png-file [image file-name] (ImageIO/write image "png" (File. (str "./" file-name ".png"))))
@@ -115,9 +118,9 @@
   (.dispose frame)
   (.toFront frame)
 
-
   (do
-    (mk-col image Color/BLACK)
-    (paint-func image calc-pixel)
-    (.repaint cv))
+    (mk-col image (rgb 0 0 0))
+    (time (paint-func image calc-pixel))
+    (.repaint cv)
+    )
   )
