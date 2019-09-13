@@ -36,26 +36,18 @@
 (defn line-sphere-intersections [line sphere]
   (map #(walk-line % line) (line-sphere-intersections-scales line sphere)))
 
-(def scene {:cam {:eye-pos (v 0.0 0.0 -1.0)
-                  :view-plane
-                  {:pos (v -1.0 -1.0 0.0)
-                   :x (v 2.0 0.0 0.0)
-                   :y (v 0.0 2.0 0.0)}
-                  }
-            :lights #{
-                      {:pos (v 0.0 0.0 0.0)}
-                      }
-            :spheres #{
-                       {:center (v 0.0 0.0 0.0)
-                        :radius 1
-                        :color (rgb 255 0 0)}
-                       {:center (v 0.1 0.0 0.0)
-                        :radius 1
-                        :color (rgb 0 255 0)}
-                       {:center (v -0.1 0.0 0.0)
-                        :radius 1
-                        :color (rgb 0 0 255)}
-                       }})
+(def spheres
+  #{
+    {:center (v 0.0 0.0 0.0)
+     :radius 1
+     :color (rgb 255 0 0)}
+    {:center (v 0.1 0.0 0.0)
+     :radius 1
+     :color (rgb 0 255 0)}
+    {:center (v -0.1 0.0 0.0)
+     :radius 1
+     :color (rgb 0 0 255)}
+    })
 
 ;; https://stackoverflow.com/a/33749052
 ;; https://www.programcreek.com/java-api-examples/?class=java.awt.image.BufferedImage&method=setRGB
@@ -64,7 +56,7 @@
         (vadd (v -1 -1 10) (vadd (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0))))
         ray {:pos view-plane-pos :vec (v 0 0 -1)}
         light (v 100 100 -100)
-        sphere-dists (map (fn [sphere] [(first (line-sphere-intersections-scales ray sphere)) sphere]) (:spheres scene))
+        sphere-dists (map (fn [sphere] [(first (line-sphere-intersections-scales ray sphere)) sphere]) spheres)
         sorted-sphere-dists (sort-by first (filter first sphere-dists))
         closest-sphere-pair (first (filter first sorted-sphere-dists))
         closest-sphere (second closest-sphere-pair)
