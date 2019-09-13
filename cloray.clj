@@ -33,8 +33,6 @@
       )
     )
   )
-(defn line-sphere-intersections [line sphere]
-  (map #(walk-line % line) (line-sphere-intersections-scales line sphere)))
 
 (def spheres
   #{
