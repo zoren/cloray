@@ -39,13 +39,6 @@
 (defn line-sphere-intersections [line sphere]
   (map #(walk-line % line) (line-sphere-intersections-scales line sphere)))
 
-(comment
-  "two, one and zero intersections"
-  (line-sphere-intersections {:pos (v 0 0 0) :vec (v 1 0 0)} {:center (v 0 0 0) :radius 1.0})
-  (line-sphere-intersections {:pos (v 0 1 0) :vec (v 1 0 0)} {:center (v 0 0 0) :radius 1.0})
-  (line-sphere-intersections {:pos (v 0 2 0) :vec (v 1 0 0)} {:center (v 0 0 0) :radius 1.0})
-  )
-
 (defn mk-buf-img [width height] (BufferedImage. width height BufferedImage/TYPE_INT_ARGB))
 (defn paint-func [image f]
   (dotimes [y (. image getHeight)]
