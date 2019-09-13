@@ -1,10 +1,9 @@
 (ns user
-  (:import [java.awt Graphics2D Color Font]
+  (:import [java.awt Color]
            [java.awt.image BufferedImage]
            [javax.imageio ImageIO]
            [java.io File]
-           [javax.swing JFrame JLabel JButton JPanel]
-           [java.awt.event WindowListener]
+           [javax.swing JFrame]
            ))
 
 (defn v
