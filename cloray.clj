@@ -56,6 +56,7 @@
         ray {:pos view-plane-pos :vec (v 0 0 -1)}
         light (v 100 100 -100)
         sphere-dists (map (fn [sphere] [(line-sphere-intersections-scale ray sphere) sphere]) spheres)
+        ;; TODO we should remove intersections that are behind the camera here
         sorted-sphere-dists (sort-by first (filter first sphere-dists))
         closest-sphere-pair (first (filter first sorted-sphere-dists))
         closest-sphere (second closest-sphere-pair)
@@ -74,6 +75,7 @@
       )
     ))
 
+;; Java specific stuff starts here
 (defn mk-buf-img [width height] (BufferedImage. width height BufferedImage/TYPE_INT_ARGB))
 (defn rgb-to-java-color [{:keys [r g b]}] (Color. (int r) (int g) (int b)))
 (defn paint-func [image f]
