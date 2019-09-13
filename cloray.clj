@@ -21,8 +21,9 @@
 (defn walk-line [scalar line] (vadd (:pos line) (scale scalar (:vec line))))
 (defn sq [x] (* x x))
 (def epsilon 1e-5)
-(defn line-sphere-intersections-scale [line sphere]
+(defn line-sphere-intersections-scale
   "returns the distance along the line to the sphere intersection closest to the line origin, if there is one"
+  [line sphere]
   (let [ctoo (vsub (:pos line) (:center sphere))
         disc (- (sq (vdot (:vec line) ctoo)) (- (vdot ctoo ctoo) (sq (:radius sphere))))
         ]
