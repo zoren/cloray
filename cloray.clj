@@ -94,14 +94,6 @@
 (defn mk-col [image color] (paint-func image (constantly color)))
 
 (defn write-png-file [image file-name] (ImageIO/write image "png" (File. (str "./" file-name ".png"))))
-(defn mk-argb-img-func [width height f]
-  (let [image (mk-buf-img width height)]
-    (dotimes [n height] (dotimes [m width] (.setRGB image (int m) (int n) (.getRGB (f m n)))))
-    image))
-(defn show-img [width height color] (mk-argb-img-func width height (fn [_x _y] color)))
-(defn show-img-2 [width height color color2]
-  (mk-argb-img-func width height
-                    (fn [x y] (if (< x y) color color2))))
 
 ;; http://www.thebusby.com/2010/02/capturing-screenshot-displaying-image.html?m=1
 (defn display-image
