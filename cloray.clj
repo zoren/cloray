@@ -27,7 +27,7 @@
 (def epsilon 1e-5)
 (defn line-sphere-intersections-scales [line sphere]
   (let [ctoo (vsub (:pos line) (:center sphere))
-        disc (- (sq (vdot (:vec line) ctoo)) (- (sq (vlength ctoo)) (sq (:radius sphere))))
+        disc (- (sq (vdot (:vec line) ctoo)) (- (vdot ctoo ctoo) (sq (:radius sphere))))
         ]
     (cond
       (< disc (- epsilon)) []
