@@ -102,12 +102,6 @@
 (defn show-img-2 [width height color color2]
   (mk-argb-img-func width height
                     (fn [x y] (if (< x y) color color2))))
-(defn calc-pixel [x y width height]
-  (if (< (vlength (vsub (v x y) (v (/ width 2) (/ height 2)))) 50.0)
-    (.getRGB Color/GREEN)
-    ;; (if (< (vlength (vsub (v x y) (v 0 0))) 100.0)
-    ;;   (.getRGB Color/RED))
-    ))
 
 ;; http://www.thebusby.com/2010/02/capturing-screenshot-displaying-image.html?m=1
 (defn display-image
