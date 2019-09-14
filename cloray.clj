@@ -10,9 +10,7 @@
 (defn rgb [r g b] {:r r :g g :b b})
 (defn map-vals [f m] (into {} (map (fn [[k v]] [k (f v)]) m)))
 (defn scale [scalar vec] (map-vals #(* scalar %) vec))
-(defn vadd
-  ([a b] (merge-with + a b))
-  ([a b & more] (reduce vadd (vadd a b) more)))
+(defn vadd [a & more] (reduce #(merge-with + %1 %2) a more))
 (defn vsub [a b] (merge-with - a b))
 (defn vdot [a b] (apply + (vals (merge-with * a b))))
 (defn vlength [v] (Math/sqrt (vdot v v)))
