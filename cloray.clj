@@ -24,8 +24,7 @@
     (cond
       (< disc (- epsilon)) nil
       (< (Math/abs disc) epsilon) (- line-dot-center-to-line-origin)
-      :else (let [f (- line-dot-center-to-line-origin)
-                  s (Math/sqrt disc)] (- f s)))))
+      :else (- (- line-dot-center-to-line-origin) (Math/sqrt disc)))))
 
 (def clamp #(max 0 (min 255 %)))
 (defn render [scene]
