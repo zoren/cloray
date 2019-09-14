@@ -54,8 +54,6 @@
    })
 
 (def clamp #(max 0 (min 255 %)))
-;; https://stackoverflow.com/a/33749052
-;; https://www.programcreek.com/java-api-examples/?class=java.awt.image.BufferedImage&method=setRGB
 (defn calc-pixel [x y width height]
   (let [camera (:camera scene)
         view-plane-point
@@ -80,8 +78,10 @@
     ))
 
 ;; Java specific stuff starts here
+;; https://stackoverflow.com/a/33749052
 (defn mk-buf-img [width height] (BufferedImage. width height BufferedImage/TYPE_INT_ARGB))
 (defn rgb-to-java-color [[r g b]] (Color. (int r) (int g) (int b)))
+;; https://www.programcreek.com/java-api-examples/?class=java.awt.image.BufferedImage&method=setRGB
 (defn paint-func [image f]
   (dotimes [y (. image getHeight)]
     (dotimes [x (. image getWidth)]
