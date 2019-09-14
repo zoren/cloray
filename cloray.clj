@@ -1,10 +1,11 @@
 (ns user
-  (:import [java.awt Color]
-           [java.awt.image BufferedImage]
-           [javax.imageio ImageIO]
-           [java.io File]
-           [javax.swing JFrame]
-           ))
+  (:import
+   [java.awt Color]
+   [java.awt.image BufferedImage]
+   [javax.imageio ImageIO]
+   [java.io File]
+   [javax.swing JFrame]
+   ))
 
 (defn v [x y z] {:x x :y y :z z})
 (defn rgb [r g b] {:r r :g g :b b})
