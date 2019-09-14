@@ -13,7 +13,9 @@
 (defn rgb [r g b] {:r r :g g :b b})
 (defn map-vals [f m] (into {} (map (fn [[k v]] [k (f v)]) m)))
 (defn scale [scalar vec] (map-vals #(* scalar %) vec))
-(defn vadd [a b] (merge-with + a b))
+(defn vadd
+  ([a b] (merge-with + a b))
+  ([a b & more] (reduce vadd (vadd a b) more)))
 (defn vsub [a b] (merge-with - a b))
 (defn vdot [a b] (apply + (vals (merge-with * a b))))
 (defn vlength [v] (Math/sqrt (vdot v v)))
@@ -53,7 +55,7 @@
 ;; https://www.programcreek.com/java-api-examples/?class=java.awt.image.BufferedImage&method=setRGB
 (defn calc-pixel [x y width height]
   (let [view-plane-pos
-        (vadd (v -1 -1 10) (vadd (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0))))
+        (vadd (v -1 -1 10) (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0)))
         ray {:pos view-plane-pos :vec (v 0 0 -1)}
         light (v 100 100 -100)
         sphere-dists (map (fn [sphere] [(line-sphere-intersections-scale ray sphere) sphere]) spheres)
