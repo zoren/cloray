@@ -7,13 +7,12 @@
    [javax.swing JFrame]
    ))
 
-(defn v [x y z] {:x x :y y :z z})
-(defn rgb [r g b] {:r r :g g :b b})
-(defn map-vals [f m] (into {} (map (fn [[k v]] [k (f v)]) m)))
-(defn scale [scalar vec] (map-vals #(* scalar %) vec))
-(defn vadd [a & more] (reduce #(merge-with + %1 %2) a more))
-(defn vsub [a b] (merge-with - a b))
-(defn vdot [a b] (apply + (map * (vals a) (vals b))))
+(defn v [x y z] [x y z])
+(defn rgb [r g b] [r g b])
+(defn scale [scalar vec] (map #(* scalar %) vec))
+(defn vadd [a & more] (reduce #(mapv + %1 %2) a more))
+(defn vsub [a b] (mapv - a b))
+(defn vdot [a b] (apply + (map * a b)))
 (defn vlength [v] (Math/sqrt (vdot v v)))
 (defn norm [v] (scale (/ 1 (vlength v)) v))
 (defn walk-line [scalar line] (vadd (:pos line) (scale scalar (:vec line))))
@@ -70,14 +69,14 @@
            clamp #(max 0 (min 255 %))
            g (fn [color-component] (clamp (* dot color-component)))
            ]
-        (map-vals g color)
+        (mapv g color)
         )
       )
     ))
 
 ;; Java specific stuff starts here
 (defn mk-buf-img [width height] (BufferedImage. width height BufferedImage/TYPE_INT_ARGB))
-(defn rgb-to-java-color [{:keys [r g b]}] (Color. (int r) (int g) (int b)))
+(defn rgb-to-java-color [[r g b]] (Color. (int r) (int g) (int b)))
 (defn paint-func [image f]
   (dotimes [y (. image getHeight)]
     (dotimes [x (. image getWidth)]
