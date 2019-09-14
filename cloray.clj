@@ -11,7 +11,7 @@
 (defn vadd [a & more] (reduce #(mapv + %1 %2) a more))
 (defn vsub [a b] (mapv - a b))
 (defn vdot [a b] (apply + (map * a b)))
-(defn vlength [v] (Math/sqrt (vdot v v)))
+(defn vlength [v] (Math/sqrt (reduce (fn [acc d] (+ acc (* d d))) 0.0 v)))
 (defn norm [v] (scale (/ 1 (vlength v)) v))
 (defn walk-line [scalar line] (vadd (:pos line) (scale scalar (:vec line))))
 (defn sq [x] (* x x))
