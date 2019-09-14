@@ -7,7 +7,7 @@
    [javax.swing JFrame]
    ))
 
-(defn scale [scalar vec] (map #(* scalar %) vec))
+(defn scale [scalar vec] (mapv #(* scalar %) vec))
 (defn vadd [a & more] (reduce #(mapv + %1 %2) a more))
 (defn vsub [a b] (mapv - a b))
 (defn vdot [a b] (apply + (map * a b)))
