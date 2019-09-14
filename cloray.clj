@@ -32,13 +32,13 @@
 (def rgb vector)
 (def spheres
   #{
-    {:center (v 0.0 0.0 0.0)
+    {:center (v -0.1 0.0 0.0)
      :radius 1
      :color (rgb 255 0 0)}
-    {:center (v 0.1 0.0 0.0)
+    {:center (v 0.0 0.0 0.0)
      :radius 1
      :color (rgb 0 255 0)}
-    {:center (v -0.1 0.0 0.0)
+    {:center (v 0.1 0.0 0.0)
      :radius 1
      :color (rgb 0 0 255)}
     })
