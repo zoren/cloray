@@ -4,7 +4,6 @@
    [java.awt.image BufferedImage]
    [javax.imageio ImageIO]
    [java.io File]
-   [javax.swing JFrame]
    ))
 
 (defn scale [scalar vec] (mapv #(* scalar %) vec))
@@ -67,16 +66,6 @@
 
 (defn write-png-file [image file-name] (ImageIO/write image "png" (File. (str "./" file-name ".png"))))
 
-;; http://www.thebusby.com/2010/02/capturing-screenshot-displaying-image.html?m=1
-(defn display-image
-  "Displays an image in a new window"
-  [image]
-  (let [frame (doto (javax.swing.JFrame. "Display Image")
-                (.setSize (+ 10 (. image getWidth)) (+ 30 (. image getHeight)))
-                (.setVisible true))
-        cv (proxy [java.awt.Canvas] [] (paint [g] (. g drawImage image nil nil)))]
-    (.add (.getContentPane frame) cv)
-    (.revalidate frame)))
 (defn render-image [image scene]
   ((render scene) {:width (. image getWidth)
                    :height (. image getHeight)
@@ -85,16 +74,6 @@
 
 (comment
   (def image (mk-buf-img 100 100))
-  (def frame (doto (javax.swing.JFrame. "Display Image")
-               (.setSize (+ 10 (. image getWidth)) (+ 30 (. image getHeight)))
-               (.setVisible true)))
-  (def cv (proxy [java.awt.Canvas] [] (paint [g] (. g drawImage image nil nil))))
-
-  (do
-    (.add (.getContentPane frame) cv)
-    (.revalidate frame))
-  (.dispose frame)
-  (.toFront frame)
 
   (def v vector)
   (def rgb vector)
