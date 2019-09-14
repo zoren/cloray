@@ -27,12 +27,13 @@
   "returns the distance along the line to the sphere intersection closest to the line origin, if there is one"
   [line sphere]
   (let [ctoo (vsub (:pos line) (:center sphere))
-        disc (- (sq (vdot (:vec line) ctoo)) (- (vdot ctoo ctoo) (sq (:radius sphere))))
+        line-dot-ctoo (vdot (:vec line) ctoo)
+        disc (- (sq line-dot-ctoo) (- (vdot ctoo ctoo) (sq (:radius sphere))))
         ]
     (cond
       (< disc (- epsilon)) nil
-      (< (Math/abs disc) epsilon) (- (vdot (:vec line) ctoo))
-      :else (let [f (- (vdot (:vec line) ctoo))
+      (< (Math/abs disc) epsilon) (- line-dot-ctoo)
+      :else (let [f (- line-dot-ctoo)
                   s (Math/sqrt disc)] (- f s))
       )
     )
