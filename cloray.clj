@@ -21,7 +21,7 @@
   [line sphere]
   (let [ctoo (vsub (:pos line) (:center sphere))
         line-dot-ctoo (vdot (:vec line) ctoo)
-        disc (- (sq line-dot-ctoo) (- (vdot ctoo ctoo) (sq (:radius sphere))))]
+        disc (- (sq line-dot-ctoo) (- (vdot ctoo ctoo) (:squared-radius sphere)))]
     (cond
       (< disc (- epsilon)) nil
       (< (Math/abs disc) epsilon) (- line-dot-ctoo)
@@ -30,25 +30,26 @@
 
 (def clamp #(max 0 (min 255 %)))
 (defn render [scene]
-  (fn [{:keys [width height set-pixel]}]
-    (dotimes [y height]
-      (let [camera (:camera scene)
-            yvec-pos (vadd (:pos camera) (scale (/ y height) (:yvec camera)))]
-        (dotimes [x width]
-          (let [view-plane-point (vadd yvec-pos (scale (/ x width) (:xvec camera)))
-                ray {:pos view-plane-point :vec (:dir camera)}
-                sphere-dists (map (fn [sphere] [(line-sphere-intersections-scale ray sphere) sphere]) (:spheres scene))
-                ;; TODO we should remove intersections that are behind the camera here
-                sorted-sphere-dists (sort-by first (filter first sphere-dists))
-                closest-sphere-pair (first (filter first sorted-sphere-dists))]
-            (if closest-sphere-pair
-              (let
-                  [closest-sphere (second closest-sphere-pair)
-                   intersection (walk-line (first closest-sphere-pair) ray)
-                   normal (norm (vsub intersection (:center closest-sphere)))
-                   dot (vdot (norm (vsub intersection (:light scene))) normal)
-                   g (fn [color-component] (clamp (* dot color-component)))]
-                (set-pixel x y (mapv g (:color closest-sphere)))))))))))
+  (let [squared-spheres (map #(assoc % :squared-radius (* (:radius %) (:radius %))) (:spheres scene))]
+    (fn [{:keys [width height set-pixel]}]
+      (dotimes [y height]
+        (let [camera (:camera scene)
+              yvec-pos (vadd (:pos camera) (scale (/ y height) (:yvec camera)))]
+          (dotimes [x width]
+            (let [view-plane-point (vadd yvec-pos (scale (/ x width) (:xvec camera)))
+                  ray {:pos view-plane-point :vec (:dir camera)}
+                  sphere-dists (map (fn [sphere] [(line-sphere-intersections-scale ray sphere) sphere]) squared-spheres)
+                  ;; TODO we should remove intersections that are behind the camera here
+                  sorted-sphere-dists (sort-by first (filter first sphere-dists))
+                  closest-sphere-pair (first (filter first sorted-sphere-dists))]
+              (if closest-sphere-pair
+                (let
+                    [closest-sphere (second closest-sphere-pair)
+                     intersection (walk-line (first closest-sphere-pair) ray)
+                     normal (norm (vsub intersection (:center closest-sphere)))
+                     dot (vdot (norm (vsub intersection (:light scene))) normal)
+                     g (fn [color-component] (clamp (* dot color-component)))]
+                  (set-pixel x y (mapv g (:color closest-sphere))))))))))))
 
 ;; Java specific stuff starts here
 ;; https://stackoverflow.com/a/33749052
