@@ -12,7 +12,7 @@
 (defn scale [scalar vec] (map-vals #(* scalar %) vec))
 (defn vadd [a & more] (reduce #(merge-with + %1 %2) a more))
 (defn vsub [a b] (merge-with - a b))
-(defn vdot [a b] (apply + (vals (merge-with * a b))))
+(defn vdot [a b] (apply + (map * (vals a) (vals b))))
 (defn vlength [v] (Math/sqrt (vdot v v)))
 (defn norm [v] (scale (/ 1 (vlength v)) v))
 (defn walk-line [scalar line] (vadd (:pos line) (scale scalar (:vec line))))
