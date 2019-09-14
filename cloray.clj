@@ -6,10 +6,7 @@
            [javax.swing JFrame]
            ))
 
-(defn v
-  ([x] {:x x})
-  ([x y] {:x x :y y})
-  ([x y z] {:x x :y y :z z}))
+(defn v [x y z] {:x x :y y :z z})
 (defn rgb [r g b] {:r r :g g :b b})
 (defn map-vals [f m] (into {} (map (fn [[k v]] [k (f v)]) m)))
 (defn scale [scalar vec] (map-vals #(* scalar %) vec))
