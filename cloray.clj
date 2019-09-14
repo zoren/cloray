@@ -18,13 +18,13 @@
 (defn line-sphere-intersections-scale
   "returns the distance along the line to the sphere intersection closest to the line origin, if there is one"
   [line sphere]
-  (let [ctoo (vsub (:pos line) (:center sphere))
-        line-dot-ctoo (vdot (:vec line) ctoo)
-        disc (- (sq line-dot-ctoo) (- (vdot ctoo ctoo) (:squared-radius sphere)))]
+  (let [center-to-line-origin (vsub (:pos line) (:center sphere))
+        line-dot-center-to-line-origin (vdot (:vec line) center-to-line-origin)
+        disc (- (sq line-dot-center-to-line-origin) (- (vdot center-to-line-origin center-to-line-origin) (:squared-radius sphere)))]
     (cond
       (< disc (- epsilon)) nil
-      (< (Math/abs disc) epsilon) (- line-dot-ctoo)
-      :else (let [f (- line-dot-ctoo)
+      (< (Math/abs disc) epsilon) (- line-dot-center-to-line-origin)
+      :else (let [f (- line-dot-center-to-line-origin)
                   s (Math/sqrt disc)] (- f s)))))
 
 (def clamp #(max 0 (min 255 %)))
