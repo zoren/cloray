@@ -28,31 +28,6 @@
       :else (let [f (- line-dot-ctoo)
                   s (Math/sqrt disc)] (- f s)))))
 
-(def v vector)
-(def rgb vector)
-(def spheres
-  #{
-    {:center (v -0.1 0.0 0.0)
-     :radius 1
-     :color (rgb 255 0 0)}
-    {:center (v 0.0 0.0 0.0)
-     :radius 1
-     :color (rgb 0 255 0)}
-    {:center (v 0.1 0.0 0.0)
-     :radius 1
-     :color (rgb 0 0 255)}
-    })
-
-(def scene-three-balls
-  {:spheres spheres
-   :camera
-   {:pos (v -1 -1 10)
-    :xvec (v 2 0 0)
-    :yvec (v 0 2 0)
-    :dir (v 0 0 -1)}
-   :light (v 100 100 -100)
-   })
-
 (def clamp #(max 0 (min 255 %)))
 (defn render [scene]
   (fn [{:keys [width height set-pixel]}]
@@ -119,6 +94,31 @@
     (.revalidate frame))
   (.dispose frame)
   (.toFront frame)
+
+  (def v vector)
+  (def rgb vector)
+  (def spheres
+    #{
+      {:center (v -0.1 0.0 0.0)
+       :radius 1
+       :color (rgb 255 0 0)}
+      {:center (v 0.0 0.0 0.0)
+       :radius 1.5
+       :color (rgb 0 255 0)}
+      {:center (v 0.1 0.0 0.0)
+       :radius 1
+       :color (rgb 0 0 255)}
+      })
+
+  (def scene-three-balls
+    {:spheres spheres
+     :camera
+     {:pos (v -1 -1 10)
+      :xvec (v 2 0 0)
+      :yvec (v 0 2 0)
+      :dir (v 0 0 -1)}
+     :light (v 100 100 -100)
+     })
 
   (do
     (mk-col image (rgb 0 0 0))
