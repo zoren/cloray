@@ -7,8 +7,6 @@
    [javax.swing JFrame]
    ))
 
-(defn v [x y z] [x y z])
-(defn rgb [r g b] [r g b])
 (defn scale [scalar vec] (map #(* scalar %) vec))
 (defn vadd [a & more] (reduce #(mapv + %1 %2) a more))
 (defn vsub [a b] (mapv - a b))
@@ -34,6 +32,8 @@
     )
   )
 
+(def v vector)
+(def rgb vector)
 (def spheres
   #{
     {:center (v 0.0 0.0 0.0)
