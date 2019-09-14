@@ -43,14 +43,24 @@
      :color (rgb 0 0 255)}
     })
 
+(def scene
+  {:spheres spheres
+   :camera
+   {:pos (v -1 -1 10)
+    :xvec (v 2 0 0)
+    :yvec (v 0 2 0)
+    :dir (v 0 0 -1)}
+   :light (v 100 100 -100)
+   })
+
 (def clamp #(max 0 (min 255 %)))
 ;; https://stackoverflow.com/a/33749052
 ;; https://www.programcreek.com/java-api-examples/?class=java.awt.image.BufferedImage&method=setRGB
 (defn calc-pixel [x y width height]
-  (let [view-plane-pos
-        (vadd (v -1 -1 10) (scale (/ x width) (v 2 0 0)) (scale (/ y height) (v 0 2 0)))
-        ray {:pos view-plane-pos :vec (v 0 0 -1)}
-        light (v 100 100 -100)
+  (let [camera (:camera scene)
+        view-plane-point
+        (vadd (:pos camera) (scale (/ x width) (:xvec camera)) (scale (/ y height) (:yvec camera)))
+        ray {:pos view-plane-point :vec (:dir camera)}
         sphere-dists (map (fn [sphere] [(line-sphere-intersections-scale ray sphere) sphere]) spheres)
         ;; TODO we should remove intersections that are behind the camera here
         sorted-sphere-dists (sort-by first (filter first sphere-dists))
@@ -61,7 +71,7 @@
           [closest-sphere (second closest-sphere-pair)
            intersection (walk-line (first closest-sphere-pair) ray)
            normal (norm (vsub intersection (:center closest-sphere)))
-           dot (vdot (norm (vsub intersection light)) normal)
+           dot (vdot (norm (vsub intersection (:light scene))) normal)
            g (fn [color-component] (clamp (* dot color-component)))
            ]
         (mapv g (:color closest-sphere))
