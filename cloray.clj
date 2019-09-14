@@ -21,16 +21,12 @@
   [line sphere]
   (let [ctoo (vsub (:pos line) (:center sphere))
         line-dot-ctoo (vdot (:vec line) ctoo)
-        disc (- (sq line-dot-ctoo) (- (vdot ctoo ctoo) (sq (:radius sphere))))
-        ]
+        disc (- (sq line-dot-ctoo) (- (vdot ctoo ctoo) (sq (:radius sphere))))]
     (cond
       (< disc (- epsilon)) nil
       (< (Math/abs disc) epsilon) (- line-dot-ctoo)
       :else (let [f (- line-dot-ctoo)
-                  s (Math/sqrt disc)] (- f s))
-      )
-    )
-  )
+                  s (Math/sqrt disc)] (- f s)))))
 
 (def v vector)
 (def rgb vector)
