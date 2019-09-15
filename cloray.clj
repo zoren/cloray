@@ -39,7 +39,7 @@
                   sphere-dists (map (fn [sphere] [(line-sphere-intersections-scale ray sphere) sphere]) squared-spheres)
                   ;; TODO we should remove intersections that are behind the camera here
                   sorted-sphere-dists (sort-by first (filter first sphere-dists))
-                  closest-sphere-pair (first (filter first sorted-sphere-dists))]
+                  closest-sphere-pair (first sorted-sphere-dists)]
               (if closest-sphere-pair
                 (let
                     [closest-sphere (second closest-sphere-pair)
