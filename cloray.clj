@@ -35,7 +35,8 @@
               yvec-pos (vadd (:pos camera) (scale (/ y height) (:yvec camera)))]
           (dotimes [x width]
             (let [view-plane-point (vadd yvec-pos (scale (/ x width) (:xvec camera)))
-                  ray {:pos view-plane-point :vec (:dir camera)}
+                  eye (:eye camera)
+                  ray {:pos eye :vec (norm (vsub view-plane-point eye))}
                   sphere-dists (map (fn [sphere] {:scalar (line-sphere-intersections-scale ray sphere)
                                                   :sphere sphere}) squared-spheres)
                   ;; TODO we should remove intersections that are behind the camera here
@@ -84,13 +85,13 @@
         :radius 1
         :color [255 0 0]}
        {:center [0.0 0.0 0.0]
-        :radius 1.5
+        :radius 1
         :color [0 255 0]}},
      :camera
-     {:pos [-1 -1 10]
+     {:pos [-1 -1 0.5]
       :xvec [2 0 0]
       :yvec [0 2 0]
-      :dir [0 0 -1]}
+      :eye [0 0 1.5]}
      :light [100 100 -100]})
 
   ((render scene-three-balls) {:width 3 :height 3 :set-pixel println})
