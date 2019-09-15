@@ -103,6 +103,5 @@
     (mk-col image (rgb 0 0 0))
     ((render scene-three-balls) {:width 3 :height 3 :set-pixel println})
     (time (render-image image scene-three-balls))
-    (.repaint cv)
     )
   )
