@@ -75,34 +75,29 @@
 (comment
   (def image (mk-buf-img 100 100))
 
-  (def v vector)
-  (def rgb vector)
-  (def spheres
-    #{
-      {:center (v -0.1 0.0 0.0)
-       :radius 1
-       :color (rgb 255 0 0)}
-      {:center (v 0.0 0.0 0.0)
-       :radius 1.5
-       :color (rgb 0 255 0)}
-      {:center (v 0.1 0.0 0.0)
-       :radius 1
-       :color (rgb 0 0 255)}
-      })
-
   (def scene-three-balls
-    {:spheres spheres
+    {:spheres
+     #{{:center [0.1 0.0 0.0]
+        :radius 1
+        :color [0 0 255]}
+       {:center [-0.1 0.0 0.0]
+        :radius 1
+        :color [255 0 0]}
+       {:center [0.0 0.0 0.0]
+        :radius 1.5
+        :color [0 255 0]}},
      :camera
-     {:pos (v -1 -1 10)
-      :xvec (v 2 0 0)
-      :yvec (v 0 2 0)
-      :dir (v 0 0 -1)}
-     :light (v 100 100 -100)
-     })
+     {:pos [-1 -1 10]
+      :xvec [2 0 0]
+      :yvec [0 2 0]
+      :dir [0 0 -1]}
+     :light [100 100 -100]})
+
+  ((render scene-three-balls) {:width 3 :height 3 :set-pixel println})
 
   (do
-    (mk-col image (rgb 0 0 0))
-    ((render scene-three-balls) {:width 3 :height 3 :set-pixel println})
+    (mk-col image [0 0 0])
     (time (render-image image scene-three-balls))
+    image
     )
   )
